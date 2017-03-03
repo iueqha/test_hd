@@ -1,5 +1,5 @@
 <?php
-class IndexController extends Cola_Controller
+class ManagerController extends Cola_Controller
 {
     public function indexAction()
     {

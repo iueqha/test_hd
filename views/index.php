@@ -8,5 +8,6 @@
 <p>1</p>
 <p>222</p>
 <p><?php echo $this->msg;?></p>
+<p><?php echo $this->id;?></p>
 </body>
 </html>
