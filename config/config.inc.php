@@ -29,8 +29,18 @@ $config = array(
         )
     ),
     "_db_config" => array(
-        "test" => array(
+        "test_data" => array(
             "master" => array(
+                'adapter' => 'Pdo_Mysql',
+                'host' => '192.168.174.175',
+                'port' => 3306,
+                'user' => 'root',
+                'password' => 'root',
+                'database' => 'test_data',
+                'charset' => 'utf8',
+                'persitent' => false
+            ),
+            "slave" => array(
                 'adapter' => 'Pdo_Mysql',
                 'host' => '192.168.174.175',
                 'port' => 3306,

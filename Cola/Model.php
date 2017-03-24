@@ -2,9 +2,9 @@
 /**
  *
  */
-abstract class Cola_Model
+class Cola_Model
 {
-    protected $_invalidErrorCode = -400;
+    const ERROR_VALIDATE_CODE = -400;
 
     /**
      * Db name
@@ -13,6 +13,9 @@ abstract class Cola_Model
      */
     protected $_db = '_db';
 
+    protected $_dbType = 'slave';//默认连接从库
+
+    protected $_dbConfig = array();
     /**
      * Table name, with prefix and main name
      *
@@ -39,14 +42,14 @@ abstract class Cola_Model
      *
      * @var int
      */
-    protected $_ttl = 86400;
+    protected $_ttl = 60;
 
     /**
-     * Validator rules
+     * Validate rules
      *
      * @var array
      */
-    protected $_rules = array();
+    protected $_validate = array();
 
     /**
      * Error infomation
@@ -54,8 +57,6 @@ abstract class Cola_Model
      * @var array
      */
     public $error = array();
-
-    public function __construct() {}
 
     /**
      * Load data
@@ -67,11 +68,11 @@ abstract class Cola_Model
     {
         is_null($col) && $col = $this->_pk;
 
-        $sql = "select * from {$this->_table} where {$col} = ? limit 1";
+        $sql = "select * from {$this->_table} where {$col} = '{$id}'";
 
         try {
-            $result = $this->db->sql($sql, array($id));
-            return empty($result) ? null : $result[0];
+            $result = $this->db->row($sql);
+            return $result;
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
             return false;
@@ -79,29 +80,20 @@ abstract class Cola_Model
     }
 
     /**
-     * Multi load data
+     * Find result
      *
-     * @param int $ids
+     * @param array $opts
      * @return array
      */
-    public function mload($ids, $col = null)
+    public function find($opts = array())
     {
-        is_null($col) && $col = $this->_pk;
-        if (empty($ids)) {
-            return null;
-        }
-        $bind = implode(',', array_fill(0, count($ids), '?'));
-        $sql = "select * from {$this->_table} where {$col} in ({$bind})";
+        is_string($opts) && $opts = array('where' => $opts);
+
+        $opts += array('table' => $this->_table);
+
         try {
-            if ($raw = $this->db->sql($sql, $ids)) {
-                $result = array();
-                foreach ($raw as $row) {
-                    $result[$row[$col]] = $row;
-                }
-                return $result;
-            } else {
-                return null;
-            }
+            $result = $this->db->find($opts);
+            return $result;
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
             return false;
@@ -115,10 +107,14 @@ abstract class Cola_Model
      * @param string $table
      * @return int
      */
-    public function count($where)
+    public function count($where, $table = null)
     {
+        if (is_null($table)) {
+            $table = $this->_table;
+        }
+
         try {
-            $result = $this->db->count($this->_table, $where);
+            $result = $this->db->count($where, $table);
             return $result;
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
@@ -130,13 +126,12 @@ abstract class Cola_Model
      * Get SQL result
      *
      * @param string $sql
-     * @param array $data
      * @return array
      */
-    public function sql($sql, $data = array())
+    public function sql($sql)
     {
         try {
-            $result = $this->db->sql($sql, $data);
+            $result = $this->db->sql($sql);
             return $result;
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
@@ -151,28 +146,14 @@ abstract class Cola_Model
      * @param string $table
      * @return boolean
      */
-    public function insert($data)
+    public function insert($data, $table = null)
     {
-        try {
-            $result = $this->db->insert($this->_table, $data);
-            return $result;
-        } catch (Exception $e) {
-            $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
-            return false;
+        if (is_null($table)) {
+            $table = $this->_table;
         }
-    }
 
-    /**
-     * Replace
-     *
-     * @param array $data
-     * @param string $table
-     * @return boolean
-     */
-    public function replace($data)
-    {
         try {
-            $result = $this->db->replace($this->_table, $data);
+            $result = $this->db->insert($data, $table);
             return $result;
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
@@ -189,26 +170,15 @@ abstract class Cola_Model
      */
     public function update($id, $data)
     {
-        $where = array("{$this->_pk}=?", array($id));
+        $where = $this->_pk . '=' . (is_int($id) ? $id : "'$id'");
 
         try {
-            $result = $this->db->update($this->_table, $data, $where);
+            $result = $this->db->update($data, $where, $this->_table);
             return true;
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
             return false;
         }
-    }
-
-    public function mupdate($todos)
-    {
-        foreach ($todos as $id => $data) {
-            if (!$this->update($id, $data)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /**
@@ -221,24 +191,27 @@ abstract class Cola_Model
     public function delete($id, $col = null)
     {
         is_null($col) && $col = $this->_pk;
-        $sql = "delete from {$this->_table} where {$col} = ?";
+        $id = $this->escape($id);
+        $where = "{$col} = '{$id}'";
 
         try {
-            return $this->db->sql($sql, array($id));
+            $result = $this->db->delete($where, $this->_table);
+            return $result;
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
             return false;
         }
     }
 
-    public function del($id, $col = null)
+    /**
+     * Escape string
+     *
+     * @param string $str
+     * @return string
+     */
+    public function escape($str)
     {
-        return $this->delete($id, $col = null);
-    }
-
-    public function mdel($ids, $col = null)
-    {
-
+        return $this->db->escape($str);
     }
 
     /**
@@ -251,21 +224,15 @@ abstract class Cola_Model
     public function db($name = null)
     {
         is_null($name) && $name = $this->_db;
-
-        if (is_array($name)) {
-            $name += array('user' => '', 'password' => '', 'options' => array());
-            return new Cola_Ext_Pdo(
-                $name['dsn'], $name['user'], $name['password'], $name['options']
-            );
+        $dbType   = $this->_dbType;
+        $dbconfig = $this->_dbConfig;
+        if (!isset($dbconfig[$name][$dbType]) || empty($dbconfig[$name][$dbType])) {
+            return false;
         }
-
-        $regName = "_cola_db_{$name}";
+        $dbClass = $dbconfig[$name][$dbType];
+        $regName = "_cola_db_{$this->_db}";
         if (!$db = Cola::getReg($regName)) {
-            $config = (array)Cola::getConfig($name)
-                    + array('user' => '', 'password' => '', 'options' => array());
-            $db = new Cola_Ext_Pdo(
-                $config['dsn'], $config['user'], $config['password'], $config['options']
-            );
+            $db = Cola::factory('Cola_Ext_Db', $dbClass);
             Cola::setReg($regName, $db);
         }
 
@@ -314,15 +281,15 @@ abstract class Cola_Model
         }
 
         if (is_null($key)) {
-            $key = get_class($this) . '-' . $func . '-' . sha1(serialize($args));
+            $key = sha1(get_class($this) . $func . serialize($args));
         }
 
         if (!$data = $this->cache->get($key)) {
-            $data = json_encode(call_user_func_array(array($this, $func), $args));
+            $data = call_user_func_array(array($this, $func), $args);
             $this->cache->set($key, $data, $ttl);
         }
 
-        return json_decode($data, true);
+        return $data;
     }
 
     /**
@@ -335,21 +302,17 @@ abstract class Cola_Model
      */
     public function validate($data, $ignoreNotExists = false, $rules = null)
     {
-        is_null($rules) && $rules = $this->_rules;
+        is_null($rules) && $rules = $this->_validate;
         if (empty($rules)) {
             return true;
         }
 
-        $validator = new Cola_Ext_Validator();
+        $validate = new Cola_Ext_Validate();
 
-        $result = $validator->check($data, $rules, $ignoreNotExists);
+        $result = $validate->check($data, $rules, $ignoreNotExists);
 
         if (!$result) {
-            $this->error = array(
-                'code' => $this->_invalidErrorCode,
-                'msg'  => current($validator->errors),
-                'ref' => $validator->errors
-            );
+            $this->error = array('code' => self::ERROR_VALIDATE_CODE, 'msg' => $validate->errors);
             return false;
         }
 
