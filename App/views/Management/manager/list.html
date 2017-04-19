@@ -1,0 +1,79 @@
+﻿{#include file="$SHIVE/header.html"#}
+
+<div id="left_layout">
+  <!-- main content -->
+  <!-- main content -->
+  <div id="main_content" class="container-fluid">
+
+    <!-- page heading -->
+    <div class="page-heading">
+
+      <h2 class="page-title muted">
+        <i class="icon-th-list"></i> 管理员管理
+      </h2>
+
+    </div>
+    <div class="tabbable tabs-custom">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#listBox" data-toggle="tab">管理员列表</a></li>
+        <li><a href="#addBox" data-toggle="tab">添加管理员</a></li>
+      </ul>
+
+      <div class="tab-content">
+        <div class="tab-pane fade in active" id="listBox">
+                <table class="table table-bordered">
+                  <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>账号</th>
+                    <th>修改时间</th>
+                    <th>操作</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {#if $count > 0#}
+                  {#foreach $list as $key=>$val#}
+                  <tr>
+                    <td>{#$val['id']#}</td>
+                    <td>{#$val['account']#}</td>
+                    <td>{#date('Y-m-d H:i',$val['update_time'])#}</td>
+                    <td>
+                      <p><a class="btn btn-info resetPassword" href="javascript:void(0);" >重置密码</a>　<a class="btn btn-danger delManager" href="javascript:void(0);" >删除管理员</a></p>
+                    </td>
+                  </tr>
+                  {#/foreach#}
+                  {#/if#}
+                  </tbody>
+                </table>
+        </div>
+        <div class="tab-pane fade" id="addBox">
+          <form class="form-horizontal" />
+            <div class="control-group">
+              <label class="control-label" for="account">管理员账号</label>
+              <div class="controls">
+                <input type="text" id="account"  placeholder="账号" autocomplete="off"/>
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label" for="password">管理员密码</label>
+              <div class="controls">
+                <input type="password" id="password"  placeholder="密码" autocomplete="off"/>
+              </div>
+            </div>
+            <div class="control-group">
+              <div class="controls">
+                <button type="button" id="addButton" class="btn btn-warning">提交</button>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+  <!-- end main content -->
+  {#include file="$SHIVE/sidebar.html"#}
+  </div>
+<script src="/js/management/managerlist.js"></script>
