@@ -124,6 +124,7 @@ class medoo
 					break;
 			}
 
+
 			$this->pdo = new PDO(
 				$dsn, 
 				$this->username,
@@ -136,8 +137,8 @@ class medoo
 				$this->pdo->exec($value);
 			}
 		}
-		catch (PDOException $e) {print_r($e->getMessage());die;
-			throw new Exception($e->getMessage());
+		catch (PDOException $e) {
+			throw new \Exception($e->getMessage());
 		}
 	}
 

@@ -56,12 +56,12 @@ class UploadController extends \App\Library\ControllerAbstract
             $mediaId   = $this->storeFile('upload_file');
 
             if(empty($mediaId)) {
-                throw new Exception("upload file failed");
+                throw new \Exception("upload file failed");
             }
             //返回https://的地址
             $picPath = $this->getUrl($mediaId);
 
-            echo $this->_echoJson(InterfaceCode::OK, ['picPath'=>$picPath,'mediaId'=>$mediaId]);
+            echo $this->_echoJson(InterfaceCode::OK, '',['picPath'=>$picPath,'mediaId'=>$mediaId]);
 
 
         } catch (FileException $e) {
@@ -75,13 +75,15 @@ class UploadController extends \App\Library\ControllerAbstract
             //后缀
             $ext      = explode('.',$_FILES[$fileKey]["name"]);
             $fileName = date('YmdHis').mt_rand(10000,99999).'.'.$ext[1];
-            move_uploaded_file($_FILES[$fileKey]["tmp_name"],ROOT_PATH.'upfiles/'.$fileName);
-            $mediaId  = 'upfiles/'. $fileName;
+            $r = move_uploaded_file($_FILES[$fileKey]["tmp_name"],ROOT_PATH.'/public/upfiles/'.$fileName);
+            if($r){
+                $mediaId  = 'upfiles/'. $fileName;
+            }
         }
         return $mediaId;
     }
     protected function getUrl($mediaId = ''){
-        return  'http://'.$_SERVER['HTTP_HOST'].$mediaId;
+        return  'http://'.$_SERVER['HTTP_HOST'].'/'.$mediaId;
     }
 
 

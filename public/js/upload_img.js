@@ -29,15 +29,15 @@ $(function(){
 			if (xhr.readyState == 4) {
 				var ret = eval("(" + xhr.responseText + ")");
 				console.log(ret);
-				/*if(ret.code == 200){
+				if(ret.code == 200){
 					var picPath = ret.result.picPath;
 					var mediaId = ret.result.mediaId;
 					//放入文本框
 					$('#pic'+index).val(mediaId);
-					$('#showPic'+index).html('<img src="'+picPath+'" height="100"/>');
+					$('#showPic'+index).html('<img src="'+picPath+'" width="100"/>');
 				}else{
 					alert(ret.msg);
-				}*/
+				}
 			}
 		}
 	});

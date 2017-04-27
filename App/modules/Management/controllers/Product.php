@@ -6,34 +6,38 @@ use App\Library\Util;
 
 class ProductController extends \App\Library\ControllerAbstract
 {
-    protected $_commonPassword = 'He12345687';
+
+    public function addAction(){
+
+    }
     public function listAction(){
-        $retClass = new App\Models\ManagerModels();
-        $ret      = $retClass->getList(1,20);
+        $p        = ($this->input->get('p'))?$this->input->get('p'):1;
+        $pageSize = 20;
+        $retClass = new App\Models\ProductModels();
+        $ret      = $retClass->getList($p,$pageSize);
         $list     = array();
         $count    = 0;
         if($ret['count']>0){
             $list = $ret['list'];
             $count = $ret['count'];
+            $pageCount = ceil($count/$pageSize);
         }
         $this->getView()->assign('list',$list);
         $this->getView()->assign('count',$count);
+        $this->getView()->assign('pageCount',$pageCount);
+        $this->getView()->assign('nowPage',$p);
 
     }
-    //添加
-    public function addAction(){
-        $account = $this->input->post('account');
-        $password = $this->input->post('password');
-        //获取加密后的密码
-        $newPass = $this->encrypPassword($password);
-        $params['account'] = $account;
-        $params['password'] = $newPass[1];
-        $params['encrypt_key'] = $newPass[0];
-        $retClass = new App\Models\ManagerModels();
+    public function doAddAction(){
+        $this->_setJsonHeader();
+        $params = $this->input->post();
+        $retClass = new App\Models\ProductModels();
         $ret = $retClass->create($params);
-
-
-
+        if($ret){
+            echo $this->_echoJson(InterfaceCode::OK);exit;
+        }else{
+            echo $this->_echoJson(InterfaceCode::DB_ERROR);exit;
+        }
     }
     //删除管理员
     public function delManagerAction(){

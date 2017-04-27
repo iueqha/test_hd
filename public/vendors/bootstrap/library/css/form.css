@@ -10,6 +10,9 @@ label {line-height:24px;}
 	font-weight:normal;
 	font-size:11px;
 }
+.red-warn{
+	color:#ff0000;
+}
 .radio, 
 .checkbox {padding-left: 0;}
 .radio input.fancy, 
