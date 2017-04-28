@@ -18,11 +18,11 @@
       <!--search-->
       <div class="well widget">
         <div class="widget-content">
-          <div class="form-inline" />
+          <div class="form-inline">
             <label>ID</label>
-            <input type="text" class="input-medium " id="searchID" placeholder="商品ID" />
+            <input type="text" class="input-medium "  value="{#$searchId#}" id="searchId" placeholder="商品ID" />
             <label>名称</label>
-            <input type="password" class="input-medium " id="searchName" placeholder="商品名称" />
+            <input type="text" class="input-medium " value="{#$searchTitle#}" id="searchTitle" placeholder="商品名称" />
 
             <button type="button" id="searchButton" class="btn btn-info">查询</button>
           </div>
@@ -53,7 +53,10 @@
               <td><img src="/{#$rs['pic']#}" width="100"/></td>
               <td>{#$rs['desc']#}</td>
               <td>{#date('Y-m-d H:i:s',$rs['update_time'])#}</td>
-              <td>@fat</td>
+              <td>
+                <a href="edit?id={#$rs['id']#}" target="_blank" class="btn btn-success">修改</a>
+                <button type="button" class="btn btn-inverse delButton">删除</button>
+              </td>
             </tr>
             {#/foreach#}
             </tbody>

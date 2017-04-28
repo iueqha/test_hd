@@ -49,12 +49,16 @@ class ProductModels extends Base
     /**
      * 获取列表
      */
-    public function getList($page,$pageSize)
+    public function getList($page,$pageSize,$params)
     {
-
-
+        if(!empty($params['id'])){
+            $where['AND']['id'] = $params['id'];
+        }
+        if(!empty($params['title'])){
+            $where['AND']['title'] = $params['title'];
+        }
+        $where['AND']['status[>]'] = 0;
         $where["ORDER"] = 'update_time DESC';
-
         //分页
         $offset = ($page-1)*$pageSize;
         $where["LIMIT"]=array($offset,$pageSize);

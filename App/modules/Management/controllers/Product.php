@@ -10,14 +10,28 @@ class ProductController extends \App\Library\ControllerAbstract
     public function addAction(){
 
     }
+    public function editAction(){
+        $id     = ($this->input->get('id'))?$this->input->get('id'):'';
+        $ret    = array();
+        if(!empty($id) && is_numeric($id)){
+            $retClass = new App\Models\ProductModels();
+            $ret      = $retClass->getInfoById($id);
+        }
+        $this->getView()->assign('info',$ret);
+    }
     public function listAction(){
-        $p        = ($this->input->get('p'))?$this->input->get('p'):1;
+        $p            = ($this->input->get('p'))?$this->input->get('p'):1;
+        $searchParam  = array(
+            'id'     => ($this->input->get('searchId'))?$this->input->get('searchId'):'',
+            'title'  => ($this->input->get('searchTitle'))?$this->input->get('searchTitle'):''
+        );
         $pageSize = 20;
         $retClass = new App\Models\ProductModels();
-        $ret      = $retClass->getList($p,$pageSize);
+        $ret      = $retClass->getList($p,$pageSize,$searchParam);
         $list     = array();
-        $count    = 0;
-        if($ret['count']>0){
+        $count     = 0;
+        $pageCount = 1;
+        if(isset($ret['count'])&&$ret['count']>0){
             $list = $ret['list'];
             $count = $ret['count'];
             $pageCount = ceil($count/$pageSize);
@@ -26,6 +40,8 @@ class ProductController extends \App\Library\ControllerAbstract
         $this->getView()->assign('count',$count);
         $this->getView()->assign('pageCount',$pageCount);
         $this->getView()->assign('nowPage',$p);
+        $this->getView()->assign('searchId',$searchParam['id']);
+        $this->getView()->assign('searchTitle',$searchParam['title']);
 
     }
     public function doAddAction(){
@@ -39,11 +55,22 @@ class ProductController extends \App\Library\ControllerAbstract
             echo $this->_echoJson(InterfaceCode::DB_ERROR);exit;
         }
     }
+    public function doEditAction(){
+        $this->_setJsonHeader();
+        $params = $this->input->post();
+        $retClass = new App\Models\ProductModels();
+        $ret = $retClass->updateById($params['id'],$params);
+        if($ret){
+            echo $this->_echoJson(InterfaceCode::OK);exit;
+        }else{
+            echo $this->_echoJson(InterfaceCode::DB_ERROR);exit;
+        }
+    }
     //删除管理员
-    public function delManagerAction(){
+    public function doDeleteAction(){
         $id = $this->input->post('id');
         $params['status']    = 0;
-        $retClass = new App\Models\ManagerModels();
+        $retClass = new App\Models\ProductModels();
         $ret = $retClass->updateById($id,$params);
 
         if($ret){
@@ -51,37 +78,6 @@ class ProductController extends \App\Library\ControllerAbstract
         }else{
             echo $this->_echoJson(InterfaceCode::DB_ERROR);exit;
         }
-    }
-    //重置密码
-    public function resetPasswordAction(){
-        $id = $this->input->post('id');
-        $password = $this->_commonPassword;
-        //获取加密后的密码
-        $newPass = $this->encrypPassword($password);
-        $params['password']    = $newPass[1];
-        $params['encrypt_key'] = $newPass[0];
-        $retClass = new App\Models\ManagerModels();
-        $ret = $retClass->updateById($id,$params);
-
-        if($ret){
-            echo $this->_echoJson(InterfaceCode::OK,'',array('password'=>$password));exit;
-        }else{
-            echo $this->_echoJson(InterfaceCode::DB_ERROR);exit;
-        }
-    }
-
-    protected function encrypPassword($password,$encrypt_key = ''){
-        if(empty($encrypt_key)){
-            //获取随机数
-            $encrypt_key = Util::getRandom();
-        }
-        $newPassword = md5($password.md5($encrypt_key));
-
-        $returnArr = array();
-        $returnArr[0] = $encrypt_key;
-        $returnArr[1] = $newPassword;
-        return $returnArr;
-
     }
 
 
