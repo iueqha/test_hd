@@ -3,15 +3,15 @@ namespace App\Models;
 use App\Models\DBConnection;
 
 /**
- * 广告图
+ * 公共信息
  * author: helicong
  */
-class BannerModels extends Base
+class CommonModels extends Base
 {
     protected $_db = 'test_data';
-    protected $_table = 'banner';
+    protected $_table = 'common';
     protected $_primary_key = 'id';
-    protected $_field = array('id','title','pic','place','update_time');
+    protected $_field = array('id','key','name','content','update_time');
 
     public function create($params){
         if(empty($params)){
@@ -49,19 +49,12 @@ class BannerModels extends Base
     /**
      * 获取列表
      */
-    public function getList($page,$pageSize,$params)
+    public function getTabList()
     {
-        if(!empty($params['id'])){
-            $where['AND']['id'] = $params['id'];
-        }
-        if(!empty($params['title'])){
-            $where['AND']['title'] = $params['title'];
-        }
-        $where['AND']['status[>]'] = 0;
-        $where["ORDER"] = 'update_time DESC';
-        //分页
-        $offset = ($page-1)*$pageSize;
-        $where["LIMIT"]=array($offset,$pageSize);
+
+        $where["ORDER"] = 'update_time ASC';
+        //最多取10个
+        $where["LIMIT"]=10;
         $result = $this->fetchAll($where,$this->_field);
 
         $return = array();

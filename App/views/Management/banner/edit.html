@@ -9,7 +9,7 @@
     <div class="page-heading">
 
       <h2 class="page-title muted">
-        <i class="icon-th-list"></i> 修改产品
+        <i class="icon-th-list"></i> 修改广告图
       </h2>
 
     </div>
@@ -25,33 +25,29 @@
           <div class="control-group">
             <label class="control-label" >名称</label>
             <div class="controls">
-              <input type="text" class="span7" value="{#$info['title']#}" name="title" id="title" placeholder="名称" />
+              <input type="text" class="span7" name="title" id="title" placeholder="名称"  value="{#$info['title']#}"/>
               <span class="help-inline red-warn">*</span>
             </div>
           </div>
           <div class="control-group">
-            <label class="control-label" >描述</label>
+            <label class="control-label" >位置</label>
             <div class="controls">
-              <textarea   class="input-block-level span7" rows="3" name="desc" id="desc">{#$info['desc']#}</textarea>
+              {#foreach $PLACE_ARRAY as $pk => $pv #}
+              <label class="radio inline">
+                <input {#if $pk==$info['place']#}checked="checked"{#/if#} type="radio" class="fancy" value="{#$pk#}" id="place" name="place" /> {#$pv#}
+              </label>
+              {#/foreach#}
             </div>
           </div>
           <div class="control-group">
             <label class="control-label" >图片</label>
             <div class="controls">
-              <input type="hidden"  id="pic1"  value="{#$info['pic']#}"/>
+              <input type="hidden"  id="pic1" value="{#$info['pic']#}"/>
               <input type="file" class="span6 fancy" id="upFile1" />
               <span class="help-inline red-warn">*</span>
             </div>
             <div class="controls" id="showPic1">
-                <img src="/{#$info['pic']#}" width="100"/>
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label" >内容</label>
-            <div class="controls">
-              <textarea class="input-block-level span7" name="content" id="content">{#$info['content']#}</textarea>
-
-              <span class="help-inline red-warn">*</span>
+              <img src="/{#$info['pic']#}" width="100"/>
             </div>
           </div>
           <div class="control-group">
@@ -76,6 +72,5 @@
   {#include file="$SHIVE/sidebar.html"#}
   </div>
 
-<script src="/vendors/ckeditor/ckeditor.js"></script>
 <script src="/js/upload_img.js"></script>
-<script src="/js/management/productedit.js"></script>
+<script src="/js/management/banneredit.js"></script>

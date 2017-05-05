@@ -1,6 +1,6 @@
 $(function(){
     //添加管理员账号
-    $('#addButton').click(function () {
+    $('#submitButton').click(function () {
         var account = $('#account').val();
         var password = $('#password').val();
         if(account == '' || account == null){

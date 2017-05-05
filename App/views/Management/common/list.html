@@ -1,0 +1,104 @@
+﻿{#include file="$SHIVE/header.html"#}
+
+<script src="/vendors/ckeditor/ckeditor.js"></script>
+<div id="left_layout">
+  <!-- main content -->
+  <!-- main content -->
+  <div id="main_content" class="container-fluid">
+
+    <!-- page heading -->
+    <div class="page-heading">
+
+      <h2 class="page-title muted">
+        <i class="icon-th-list"></i> 产品管理
+      </h2>
+
+    </div>
+    <!-- post wrapper -->
+    <div class="row-fluid">
+      <div class="tabbable tabs-custom">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#tb3" data-toggle="tab">添加新选项卡</a></li>
+          {#if $count>0#}
+          {#foreach $list as $rs#}
+          <li><a href="#home{#$rs['id']#}" data-toggle="tab">{#$rs['name']#}</a></li>
+          {#/foreach#}
+          {#/if#}
+        </ul>
+
+        <div class="tab-content">
+          {#if $count>0#}
+          {#foreach $list as $rs#}
+          <div class="tab-pane fade" id="home{#$rs['id']#}">
+            <div class="form-horizontal" >
+              <div class="control-group">
+                <label class="control-label" >内容标识</label>
+                <div class="controls">
+                  <input disabled="disabled" type="text" class="span3" name="key" value="{#$rs['key']#}" />
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label" >内容</label>
+                <div class="controls">
+                  <textarea class="input-block-level span7" name="content{#$rs['id']#}" id="content{#$rs['id']#}">{#$rs['content']#}</textarea>
+                  <span class="help-inline red-warn">*</span>
+                </div>
+              </div>
+              <div class="control-group">
+                <div class="controls">
+                  <button onclick="submitForm()" class="submitButton btn btn-warning">提交</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <script>
+            var thisId = "{#$rs['id']#}";
+            CKEDITOR.replace('content'+thisId);
+
+          </script>
+          {#/foreach#}
+          {#/if#}
+
+          <div class="tab-pane fade in active" id="tb3">
+            <div class="form-horizontal" >
+              <div class="control-group">
+                <label class="control-label" >选项卡名称</label>
+                <div class="controls">
+                  <input type="text" class="span3" name="name" id="name" placeholder="名称" maxlength="10"/>
+                  <span class="help-inline red-warn">*唯一不可重复</span>
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label" >内容标识</label>
+                <div class="controls">
+                  <input type="text" class="span3" name="key" id="key" placeholder="内容标识" maxlength="10"/>
+                  <span class="help-inline red-warn">*唯一不可重复</span>
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label" >内容</label>
+                <div class="controls">
+                  <textarea class="input-block-level span7 textcontent" name="content" id="content">{#$rs['content']#}</textarea>
+                  <span class="help-inline red-warn">*</span>
+                </div>
+              </div>
+              <div class="control-group">
+                <div class="controls">
+                  <button id="addButton" class="btn btn-warning">提交</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+  <!-- end main content -->
+  {#include file="$SHIVE/sidebar.html"#}
+  </div>
+<script src="/js/management/commonlist.js"></script>
