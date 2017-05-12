@@ -66,7 +66,7 @@ class CommonController extends \App\Library\ControllerAbstract
             echo $this->_echoJson(InterfaceCode::DB_ERROR);exit;
         }
     }
-    //删除管理员
+    //删除
     public function doDeleteAction(){
         $id = $this->input->post('id');
         $params['status']    = 0;

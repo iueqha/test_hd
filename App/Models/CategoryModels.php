@@ -49,24 +49,25 @@ class CategoryModels extends Base
     /**
      * 获取列表
      */
-    public function getList($page,$pageSize)
+    public function getList()
     {
 
-        $where["ORDER"] = 'update_time DESC';
-
-        //分页
-        $offset = ($page-1)*$pageSize;
-        $where["LIMIT"]=array($offset,$pageSize);
+        $where["ORDER"] = 'update_time ASC';
 
         $result = $this->fetchAll($where,$this->_field);
 
         $return = array();
         if($result){
             $return['list'] = $result;
-            unset($where['LIMIT']);
             $return['count'] = $this->count($where);
         }
         return $return;
+    }
+
+    public  function deleteById($id)
+    {
+        $where["AND"]["id"] = intval($id);
+        return $this->delete($where);
     }
 
 

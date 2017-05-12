@@ -1,0 +1,68 @@
+﻿{#include file="$SHIVE/header.html"#}
+<script src="/vendors/dtree/dtree.js"></script>
+<div id="left_layout">
+  <!-- main content -->
+  <!-- main content -->
+  <div id="main_content" class="container-fluid">
+
+    <!-- page heading -->
+    <div class="page-heading">
+
+      <h2 class="page-title muted">
+        <i class="icon-th-list"></i> 产品管理
+      </h2>
+
+    </div>
+    <!-- post wrapper -->
+    <div class="row-fluid">
+      <div class="span5">
+        <div class="dtreeBtn" >
+          <p><a href="javascript: d.openAll();" class="btn btn-warning">打开</a>  <a class="btn btn-danger" href="javascript: d.closeAll();">关闭</a></p>
+        </div>
+        <div id="dtreeBox"></div>
+      </div>
+      <div class="span6">
+        <!-- widget -->
+        <div class="well widget">
+
+          <!-- widget content -->
+          <div class="widget-content">
+            <table class="table table-bordered">
+              <tr>
+                <th colspan="3" class="text-center">编辑当前类别</th>
+              </tr>
+              <tr>
+                <td class="25%">当前类别：</td>
+                <td class="45%">
+                  <input disabled="disabled"  type="text" class="form-control width-170" name="categoryName"  id="categoryName"  maxlength="15"/>
+                  <input type="hidden"  name="categoryId"  id="categoryId" />
+                </td>
+                <td class="30%">
+                  <input style="display: none;" type="button" id="btn_update" class="btn btn-success" value="修改" onclick="updateCategory();"/>
+                  <input style="display: none;" type="button" id="btn_delete"  class="btn btn-danger" value="删除" onclick="delCategory();"/>
+                </td>
+              </tr>
+              <tr>
+                <th colspan="3" class="text-center">添加子类别</th>
+              </tr>
+              <tr>
+                <td class="25%">子类别名称：</td>
+                <td class="45%"><input  type="text" class="form-control width-170" name="newName"  id="newName" maxlength="15"/></td>
+                <td class="30%">
+                  <input type="button" id="btn_addnew" class="btn btn-success" value="添加子类别" onclick="addCategory();"/>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <!-- ./ widget -->
+      </div>
+
+    </div>
+
+
+  </div>
+  <!-- end main content -->
+  {#include file="$SHIVE/sidebar.html"#}
+  </div>
+<script src="/js/management/categorylist.js"></script>

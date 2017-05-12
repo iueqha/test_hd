@@ -35,6 +35,7 @@
                 <label class="control-label" >内容标识</label>
                 <div class="controls">
                   <input disabled="disabled" type="text" class="span3" name="key" value="{#$rs['key']#}" />
+                  <input type="hidden" name="name" value="{#$rs['name']#}" />
                 </div>
               </div>
               <div class="control-group">
@@ -46,7 +47,7 @@
               </div>
               <div class="control-group">
                 <div class="controls">
-                  <button onclick="submitForm()" class="submitButton btn btn-warning">提交</button>
+                  <button onclick="submitForm({#$rs['id']#});" class="submitButton btn btn-warning">提交</button>
                 </div>
               </div>
 
@@ -79,7 +80,7 @@
               <div class="control-group">
                 <label class="control-label" >内容</label>
                 <div class="controls">
-                  <textarea class="input-block-level span7 textcontent" name="content" id="content">{#$rs['content']#}</textarea>
+                  <textarea class="input-block-level span7 textcontent" name="content" id="content"></textarea>
                   <span class="help-inline red-warn">*</span>
                 </div>
               </div>
